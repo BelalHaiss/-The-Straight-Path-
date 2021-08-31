@@ -15,8 +15,9 @@ import Link from 'next/link';
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
 import { WiDaySunny } from 'react-icons/wi';
 import { IoMoon } from 'react-icons/io5';
-
-const Nav = () => {
+import { connect } from 'react-redux';
+import { theLogin, theSignUP, theLogOut } from '../../Actions/mainAction';
+const Nav = ({ user, theLogin, theSignUP, theLogOut }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -26,11 +27,8 @@ const Nav = () => {
     <nav>
       <Flex
         p='2'
-        bg={useColorModeValue('gray.200', 'gray.800')}
-        // color={useColorModeValue('gray.600', 'white')}
+        bg={useColorModeValue('gray.200', 'gray.600')}
         direction={{ base: 'column', sm: 'row' }}
-        // justifyContent={{ base: 'flex-end', sm: 'flex-end' }}
-
         alignItems='center'
         mx='auto'
       >
@@ -97,31 +95,59 @@ const Nav = () => {
           as={colorMode === 'light' ? IoMoon : WiDaySunny}
           onClick={toggleColorMode}
         />
-        <Link href='#logIn'>
+        {user === null ? (
+          <>
+            <Link href='#logIn'>
+              <Button
+                onClick={theLogin}
+                display={{
+                  base: `${isOpen ? 'block' : 'none'}`,
+                  sm: 'inherit'
+                }}
+                size='sm'
+                mx={{ sm: 2 }}
+                colorScheme='teal'
+                variant='ghost'
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link href='#singUp'>
+              <Button
+                onClick={theSignUP}
+                display={{
+                  base: `${isOpen ? 'block' : 'none'}`,
+                  sm: 'inherit'
+                }}
+                size='sm'
+                mr={{ sm: 2 }}
+                colorScheme='teal'
+                variant='solid'
+              >
+                Sign Up
+              </Button>
+            </Link>{' '}
+          </>
+        ) : (
           <Button
-            display={{ base: `${isOpen ? 'block' : 'none'}`, sm: 'inherit' }}
-            size='sm'
-            mx={{ sm: 2 }}
-            colorScheme='teal'
-            variant='ghost'
-          >
-            Sign In
-          </Button>
-        </Link>
-        <Link href='#singUp'>
-          <Button
+            onClick={theLogOut}
             display={{ base: `${isOpen ? 'block' : 'none'}`, sm: 'inherit' }}
             size='sm'
             mr={{ sm: 2 }}
-            colorScheme='teal'
+            colorScheme='red'
             variant='solid'
           >
-            Sign Up
+            Logout
           </Button>
-        </Link>
+        )}
       </Flex>
     </nav>
   );
 };
 
-export default Nav;
+const mapStateToProps = (state) => ({
+  user: state.main.user
+});
+export default connect(mapStateToProps, { theLogin, theSignUP, theLogOut })(
+  Nav
+);
