@@ -50,49 +50,74 @@ function Login({ loginBtn, theLogin, theSignUP }) {
   const onChange = (e) => {
     setRegisterData({ ...registerData, [e.target.name]: e.target.value });
   };
+  const checkMail = () => {
+    const re = /^([a-zA-Z0-9_\-?\.?]+)@([a-zA-Z]){3,}\.([a-zA-Z]){2,5}$/;
+    let problem = false;
+    if (!re.test(registerData.email)) {
+      setRegisterData({ ...registerData, email: '' });
+      problem = true;
+    }
+    return problem;
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     setFormSubmited(true);
-    console.log(registerData);
-    if (!registerData.age || registerData.age <= 8 || registerData.age >= 70) {
-      return Toast(
-        'Check your age input',
-        'Unable to create user account',
-        'error'
-      );
-    }
-    const re = /^([a-zA-Z0-9_\-?\.?]+)@([a-zA-Z]){3,}\.([a-zA-Z]){2,5}$/;
-    if (!re.test(registerData.email)) {
-      setRegisterData({ ...registerData, email: '' });
-      return Toast(
-        'Check your email input',
-        'Unable to create user account',
-        'error'
-      );
-    }
-    if (registerData.username.indexOf(' ') >= 0) {
-      return Toast(
-        'Check Username Input ',
-        'Make Sure There is no Space with',
-        'error'
-      );
-    }
-    Object.keys(registerData).map((item) => {
-      if (registerData[item] === '') {
+    if (loginState === 'signin') {
+      const { email, password } = registerData;
+      if (checkMail()) {
         return Toast(
-          'Check your ' + item + ' input',
+          'Check your email input',
           'Unable to create user account',
           'error'
         );
       }
-    });
-    if (registerData.password.length < 8) {
-      return Toast(
-        'Password should be more than 8 letter',
-        'Unable to create user account',
-        'error'
-      );
     }
+    if (loginState === 'signup') {
+      if (
+        !registerData.age ||
+        registerData.age <= 8 ||
+        registerData.age >= 70
+      ) {
+        return Toast(
+          'Check your age input',
+          'Unable to create user account',
+          'error'
+        );
+      }
+      const mail = checkMail();
+      if (mail) {
+        return Toast(
+          'Check your email input',
+          'Unable to create user account',
+          'error'
+        );
+      }
+
+      if (registerData.username.indexOf(' ') >= 0) {
+        return Toast(
+          'Check Username Input ',
+          'Make Sure There is no Space with',
+          'error'
+        );
+      }
+      Object.keys(registerData).map((item) => {
+        if (registerData[item] === '') {
+          return Toast(
+            'Check your ' + item + ' input',
+            'Unable to create user account',
+            'error'
+          );
+        }
+      });
+      if (registerData.password.length < 8) {
+        return Toast(
+          'Password should be more than 8 letter',
+          'Unable to create user account',
+          'error'
+        );
+      }
+    }
+    alert('everything is good :D');
   };
   useEffect(() => {
     switch (loginBtn) {
@@ -267,7 +292,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   <Flex direction='column'>
                     <Link
                       color={'teal.400'}
-                      onClick={loginState !== 'signin' && theLogin}
+                      onClick={() => loginState !== 'signin' && theLogin()}
                     >
                       {loginState === 'signin'
                         ? 'Forget Password ?'
@@ -276,7 +301,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                     {loginState === 'signin' && (
                       <Link
                         color={'teal.400'}
-                        onClick={loginState === 'signin' && theSignUP}
+                        onClick={() => loginState === 'signin' && theSignUP()}
                       >
                         {loginState === 'signin' && 'Don`t Have an account ?'}
                       </Link>

@@ -6,7 +6,7 @@ export default function Toast(text, description, type) {
     title: `${text}`,
     description: `${description}`,
     status: `${type}`,
-    duration: 9000,
+    duration: 2000,
     isClosable: true
   });
 }
