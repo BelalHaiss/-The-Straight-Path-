@@ -70,6 +70,13 @@ function Login({ loginBtn, theLogin, theSignUP }) {
         'error'
       );
     }
+    if (registerData.username.indexOf(' ') >= 0) {
+      return Toast(
+        'Check Username Input ',
+        'Make Sure There is no Space with',
+        'error'
+      );
+    }
     Object.keys(registerData).map((item) => {
       if (registerData[item] === '') {
         return Toast(
