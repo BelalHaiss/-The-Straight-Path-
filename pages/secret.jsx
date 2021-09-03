@@ -1,7 +1,9 @@
 import protectedRoute from '../Hoc/ProtectedRoute';
-
-const secret = (props) => {
+import { connect } from 'react-redux';
+const secret = ({ user }) => {
   return <div>you shouldn`t see me</div>;
 };
-
-export default protectedRoute(secret);
+const mapStateToProps = (state) => ({
+  user: state.main.user
+});
+export default connect(mapStateToProps)(protectedRoute(secret));

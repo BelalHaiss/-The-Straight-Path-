@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import { connect } from 'react-redux';
-const protectedRoute = (ProtectedComponent, { user }) => {
+import Cookies from 'js-cookie';
+const protectedRoute = (ProtectedComponent) => {
   // eslint-disable-next-line
   return (props) => {
+    const { user } = props;
     const Router = useRouter();
     if (typeof window !== 'undefined') {
-      console.log(user);
       if (user === null) {
         Router.replace('/');
         return null;
@@ -17,8 +17,5 @@ const protectedRoute = (ProtectedComponent, { user }) => {
     return null;
   };
 };
-const mapStateToProps = (state) => ({
-  user: state.main.user
-});
 
-export default connect(mapStateToProps)(protectedRoute);
+export default protectedRoute;

@@ -2,10 +2,10 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Layout from '../component/Layout/Layout';
 import { Provider } from 'react-redux';
 import { useStore } from '../store';
+import '../styles/date.scss';
 
 function MyApp({ Component, pageProps }) {
   const store = useStore(pageProps.initialReduxState);
-  console.log(Component, pageProps);
   return (
     <Provider store={store}>
       <ChakraProvider>
