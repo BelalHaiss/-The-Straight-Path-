@@ -1,11 +1,14 @@
 import * as types from './types';
 const initialState = {
   user: null,
+  lang: 'ar',
   loginBtn: null
 };
 
 const mainReducer = (state = initialState, action) => {
   switch (action.type) {
+    case types.changeLang:
+      return { ...state, lang: state.lang === 'ar' ? 'en' : 'ar' };
     case types.User:
       return { ...state, user: action.payload };
     case types.signUp:

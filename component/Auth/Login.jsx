@@ -1,10 +1,9 @@
 import {
   Flex,
-  Box,
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
+  Text,
   Stack,
   Link,
   useDisclosure,
@@ -14,111 +13,80 @@ import {
   ModalOverlay,
   ModalContent,
   ModalBody,
+  Icon,
+  Box,
   ModalHeader,
   ModalCloseButton,
-  FormErrorMessage,
   Modal,
-  Center,
-  useColorModeValue
+  Center
 } from '@chakra-ui/react';
+
 import { IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import dayjs from 'dayjs';
-import { AiFillDownCircle } from 'react-icons/ai';
+import { useRouter } from 'next/router';
+
 import { FcCalendar } from 'react-icons/fc';
 import { MdEmail, MdLock } from 'react-icons/md';
-
+import { CgGenderMale, CgGenderFemale } from 'react-icons/cg';
+import { FaUserGraduate } from 'react-icons/fa';
+import { GiTeacher } from 'react-icons/gi';
+import { checkRegister } from '../UTS/loginUTS';
 import {
   theLogin,
   theSignUP,
   theDefaultLoginBtn
 } from '../../Actions/mainAction';
 import Toast from '../UTS/Toast';
-function Login({ loginBtn, theLogin, theSignUP }) {
+import axios from 'axios';
+function Login({ loginBtn, theLogin, theSignUP, lang }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loginState, setLoginState] = useState('signin');
 
   const [formSubmited, setFormSubmited] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+
   const [registerData, setRegisterData] = useState({
     name: '',
     username: '',
     email: '',
     password: '',
-    age: ''
+    age: '',
+    type: '',
+    gender: ''
   });
   const onChange = (e) => {
+    e.target.name === 'email' && setEmailError(false);
     setRegisterData({ ...registerData, [e.target.name]: e.target.value });
   };
-  const checkMail = () => {
-    const re = /^([a-zA-Z0-9_\-?\.?]+)@([a-zA-Z]){3,}\.([a-zA-Z]){2,5}$/;
-    let problem = false;
-    if (!re.test(registerData.email)) {
-      setRegisterData({ ...registerData, email: '' });
-      problem = true;
-    }
-    return problem;
-  };
-  const onSubmit = (e) => {
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     setFormSubmited(true);
-    if (loginState === 'signin') {
-      const { email, password } = registerData;
-      if (checkMail()) {
-        return Toast(
-          'Check your email input',
-          'Unable to create user account',
-          'error'
-        );
-      }
+
+    const checkLogin = checkRegister(loginState, registerData, lang);
+    checkLogin.error === 'mail' ? setEmailError(true) : setEmailError(false);
+    if (checkLogin.error !== false) {
+      return Toast(
+        lang === 'en' ? 'invalid credentials' : 'خطا في المعلومات',
+        checkLogin.message
+      );
     }
     if (loginState === 'signup') {
-      if (
-        !registerData.age ||
-        registerData.age <= 8 ||
-        registerData.age >= 70
-      ) {
-        return Toast(
-          'Check your age input',
-          'Unable to create user account',
-          'error'
-        );
-      }
-      const mail = checkMail();
-      if (mail) {
-        return Toast(
-          'Check your email input',
-          'Unable to create user account',
-          'error'
-        );
-      }
-
-      if (registerData.username.indexOf(' ') >= 0) {
-        return Toast(
-          'Check Username Input ',
-          'Make Sure There is no Space with',
-          'error'
-        );
-      }
-      Object.keys(registerData).map((item) => {
-        if (registerData[item] === '') {
-          return Toast(
-            'Check your ' + item + ' input',
-            'Unable to create user account',
-            'error'
-          );
-        }
-      });
-      if (registerData.password.length < 8) {
-        return Toast(
-          'Password should be more than 8 letter',
-          'Unable to create user account',
-          'error'
-        );
+      try {
+        const data = await axios.post('http://localhost:5000/api/auth', {
+          ...registerData,
+          lang
+        });
+      } catch (e) {
+        console.dir(e.response.data.error);
+        alert(e.response.data.error);
       }
     }
-    alert('everything is good :D');
+    //  data);
   };
+  // alert('everything is good :D');
+
   useEffect(() => {
     switch (loginBtn) {
       case 'signin':
@@ -135,7 +103,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
 
       <ModalContent>
         <ModalHeader textAlign='center'>
-          {loginState === 'signin' ? 'Login In' : 'Create a new acount '}
+          {loginState === 'signin' ? 'Login In' : 'Create a new account '}
         </ModalHeader>
         <ModalCloseButton />
 
@@ -168,11 +136,15 @@ function Login({ loginBtn, theLogin, theSignUP }) {
             <Center fontSize='md' fontWeight='bold'>
               OR
             </Center>
-            <form action='#' method='post' onSubmit={onSubmit}>
+            <form
+              action='/api/auth'
+              method={loginState === 'signin' ? 'get' : 'post'}
+              onSubmit={onSubmit}
+            >
               {loginState !== 'signin' && (
                 <>
                   <FormControl
-                    isInvalid={formSubmited && registerData.name === ''}
+                    isInvalid={formSubmited && registerData.name.length < 8}
                     id='name'
                   >
                     <FormLabel>Name</FormLabel>
@@ -181,9 +153,9 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                       <InputLeftAddon
                         pointerEvents='none'
                         w='30%'
-                        fontSize='0.5rem'
+                        fontSize='0.7rem'
                         // eslint-disable-next-line
-                        children=' "E.G" Mohamed Ahmed'
+                        children={'e.g ' + 'Mohammed Rady'}
                       />
                       <Input
                         value={registerData.name}
@@ -196,16 +168,16 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   </FormControl>
                   <FormControl
                     id='username'
-                    isInvalid={formSubmited && registerData.username === ''}
+                    isInvalid={formSubmited && registerData.username.length < 4}
                   >
                     <FormLabel>Username</FormLabel>
                     <InputGroup size='sm'>
                       <InputLeftAddon
                         pointerEvents='none'
                         w='30%'
-                        fontSize='0.5rem'
+                        fontSize='0.7rem'
                         // eslint-disable-next-line
-                        children=' "E.G" Medo10'
+                        children={'e.g ' + 'Medo10'}
                       />
                       <Input
                         size='sm'
@@ -218,10 +190,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   </FormControl>
                   <FormControl
                     id='age'
-                    isInvalid={
-                      formSubmited &&
-                      (registerData.age <= 8 || registerData.age >= 70)
-                    }
+                    isInvalid={formSubmited && registerData.age < 5}
                   >
                     <FormLabel>Age</FormLabel>
                     <InputGroup size='sm'>
@@ -230,8 +199,104 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                         // eslint-disable-next-line
                         children={<FcCalendar fontSize='1.5rem' />}
                       />
-                      <Input name='age' type='number' onChange={onChange} />
+                      <Input
+                        name='age'
+                        value={registerData.age}
+                        type='number'
+                        onChange={onChange}
+                      />
                     </InputGroup>
+                  </FormControl>
+
+                  <FormControl mt='3' id='gender'>
+                    <FormLabel fontWeight='medium' fontSize='lg' p='1'>
+                      Gender
+                    </FormLabel>
+                    <Flex
+                      justifyContent='space-between'
+                      gridGap='1'
+                      p='1'
+                      alignItems='center'
+                      border={formSubmited && !registerData.gender && '2px'}
+                      borderColor={
+                        formSubmited && !registerData.gender && 'red'
+                      }
+                    >
+                      <Button
+                        w='45%'
+                        colorScheme='pink'
+                        p='1'
+                        name='gender'
+                        value='female'
+                        variant={
+                          registerData.gender === 'female' ? 'solid' : 'outline'
+                        }
+                        onClick={onChange}
+                        fontSize='lg'
+                        leftIcon={<CgGenderFemale />}
+                      >
+                        Female
+                      </Button>
+                      <Button
+                        colorScheme='green'
+                        name='gender'
+                        value='male'
+                        p='1'
+                        variant={
+                          registerData.gender === 'male' ? 'solid' : 'outline'
+                        }
+                        onClick={onChange}
+                        leftIcon={<CgGenderMale />}
+                        w='45%'
+                        fontSize='lg'
+                      >
+                        MALE
+                      </Button>
+                    </Flex>
+                  </FormControl>
+                  <FormControl mt='3' id='gender'>
+                    <FormLabel fontWeight='medium' fontSize='lg' p='1'>
+                      Account Type:
+                    </FormLabel>
+                    <Flex
+                      justifyContent='space-between'
+                      gridGap='1'
+                      p='1'
+                      alignItems='center'
+                      border={formSubmited && !registerData.type && '2px'}
+                      borderColor={formSubmited && !registerData.type && 'red'}
+                    >
+                      <Button
+                        w='45%'
+                        colorScheme='blue'
+                        p='1'
+                        name='type'
+                        value='student'
+                        variant={
+                          registerData.type === 'student' ? 'solid' : 'outline'
+                        }
+                        onClick={onChange}
+                        fontSize='lg'
+                        leftIcon={<FaUserGraduate />}
+                      >
+                        Student
+                      </Button>
+                      <Button
+                        colorScheme='blue'
+                        p='1'
+                        name='type'
+                        value='teacher'
+                        variant={
+                          registerData.type === 'teacher' ? 'solid' : 'outline'
+                        }
+                        onClick={onChange}
+                        leftIcon={<GiTeacher />}
+                        w='45%'
+                        fontSize='lg'
+                      >
+                        Teacher
+                      </Button>
+                    </Flex>
                   </FormControl>
                 </>
               )}
@@ -239,14 +304,14 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                 id='email'
                 isInvalid={
                   formSubmited &&
-                  (registerData.email === '' || registerData.email === false)
+                  (registerData.email === '' || emailError === true)
                 }
               >
                 <FormLabel>Email address</FormLabel>
                 <InputGroup size='sm'>
                   <InputLeftAddon
                     pointerEvents='none'
-                    fontSize='0.5rem'
+                    fontSize='0.7rem'
                     // eslint-disable-next-line
                     children={<MdEmail fontSize='1.5rem' />}
                   />
@@ -275,6 +340,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   <Input
                     size='sm'
                     type='password'
+                    value={registerData.password}
                     onChange={onChange}
                     name='password'
                     autoComplete='password'
@@ -288,10 +354,9 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   align={'start'}
                   justify={'space-between'}
                 >
-                  <Checkbox>Remember me</Checkbox>
                   <Flex direction='column'>
                     <Link
-                      color={'teal.400'}
+                      color={'green.400'}
                       onClick={() => loginState !== 'signin' && theLogin()}
                     >
                       {loginState === 'signin'
@@ -300,7 +365,7 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                     </Link>
                     {loginState === 'signin' && (
                       <Link
-                        color={'teal.400'}
+                        color={'green.400'}
                         onClick={() => loginState === 'signin' && theSignUP()}
                       >
                         {loginState === 'signin' && 'Don`t Have an account ?'}
@@ -309,11 +374,11 @@ function Login({ loginBtn, theLogin, theSignUP }) {
                   </Flex>
                 </Stack>
                 <Button
-                  bg={'teal.400'}
+                  bg={'green.400'}
                   color={'white'}
                   type='submit'
                   _hover={{
-                    bg: 'teal.500'
+                    bg: 'green.500'
                   }}
                 >
                   Submit
@@ -328,7 +393,8 @@ function Login({ loginBtn, theLogin, theSignUP }) {
 }
 
 const mapStateToProps = (state) => ({
-  loginBtn: state.main.loginBtn
+  loginBtn: state.main.loginBtn,
+  lang: state.main.lang
 });
 
 export default connect(mapStateToProps, {

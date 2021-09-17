@@ -16,15 +16,18 @@ import * as types from '../Reducers/types';
 
 export const theLogin = () => (dispatch) => {
   dispatch({ type: types.signIn });
-  setTimeout(() => dispatch(theDefaultLoginBtn()), [200]);
+  setTimeout(() => dispatch(theDefaultLoginBtn()), [1]);
 };
 export const theSignUP = () => (dispatch) => {
   dispatch({ type: types.signUp });
-  setTimeout(() => dispatch(theDefaultLoginBtn()), [200]);
+  setTimeout(() => dispatch(theDefaultLoginBtn()), [1]);
 };
 export const theDefaultLoginBtn = () => (dispatch) => {
   dispatch({ type: types.defaultLoginBTN });
 };
 export const theLogOut = () => (dispatch) => {
   dispatch({ type: types.logout });
+};
+export const theChangeLang = () => (dispatch) => {
+  dispatch({ type: types.changeLang });
 };
