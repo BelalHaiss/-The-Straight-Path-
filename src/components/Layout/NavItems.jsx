@@ -1,12 +1,7 @@
 import React, { useEffect } from 'react';
 import {
-  Flex,
-  Button,
-  Icon,
   useDisclosure,
-  useColorMode,
   Image,
-  useColorModeValue,
   DrawerFooter,
   Drawer,
   DrawerOverlay,

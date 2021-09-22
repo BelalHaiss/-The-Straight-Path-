@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
 const protectedRoute = (ProtectedComponent) => {
   // eslint-disable-next-line
   return (props) => {

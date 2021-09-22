@@ -3,7 +3,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Text,
   Stack,
   Link,
   useDisclosure,
@@ -14,7 +13,6 @@ import {
   ModalContent,
   ModalBody,
   Icon,
-  Box,
   ModalHeader,
   ModalCloseButton,
   Modal,
@@ -23,8 +21,6 @@ import {
 
 import { IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { useRouter } from 'next/router';
 
 import { FcCalendar } from 'react-icons/fc';
 import { MdEmail, MdLock } from 'react-icons/md';
@@ -32,14 +28,15 @@ import { CgGenderMale, CgGenderFemale } from 'react-icons/cg';
 import { FaUserGraduate } from 'react-icons/fa';
 import { GiTeacher } from 'react-icons/gi';
 import { checkRegister } from '../UTS/loginUTS';
-import {
-  theLogin,
-  theSignUP,
-  theDefaultLoginBtn
-} from '../../Actions/mainAction';
+import { useSettingsStore } from '../../zustand/store';
 import Toast from '../UTS/Toast';
 import axios from 'axios';
-function Login({ loginBtn, theLogin, theSignUP, lang }) {
+function Login() {
+  const loginBtn = useSettingsStore((state) => state.loginBtn);
+  const theDefaultLoginBtn = useSettingsStore(
+    (state) => state.theDefaultLoginBtn
+  );
+  const theLoginBtn = useSettingsStore((state) => state.theLoginBtn);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loginState, setLoginState] = useState('signin');
 
@@ -64,20 +61,17 @@ function Login({ loginBtn, theLogin, theSignUP, lang }) {
     e.preventDefault();
     setFormSubmited(true);
 
-    const checkLogin = checkRegister(loginState, registerData, lang);
+    const checkLogin = checkRegister(loginState, registerData);
     checkLogin.error === 'mail' ? setEmailError(true) : setEmailError(false);
     if (checkLogin.error !== false) {
-      return Toast(
-        lang === 'en' ? 'invalid credentials' : 'خطا في المعلومات',
-        checkLogin.message
-      );
+      return Toast('خطا في المعلومات', checkLogin.message);
     }
     if (loginState === 'signup') {
       try {
-        const data = await axios.post('http://localhost:5000/api/auth', {
-          ...registerData,
-          lang
-        });
+        const data = await axios.post(
+          'http://localhost:5000/api/auth',
+          registerData
+        );
       } catch (e) {
         console.dir(e.response.data.error);
         alert(e.response.data.error);
@@ -91,9 +85,11 @@ function Login({ loginBtn, theLogin, theSignUP, lang }) {
     switch (loginBtn) {
       case 'signin':
         setLoginState('signin');
+        setTimeout(theDefaultLoginBtn, [100]);
         return onOpen();
       case 'signup':
         setLoginState('signup');
+        setTimeout(theDefaultLoginBtn, [100]);
         return onOpen();
     }
   }, [loginBtn, onOpen]);
@@ -357,7 +353,9 @@ function Login({ loginBtn, theLogin, theSignUP, lang }) {
                   <Flex direction='column'>
                     <Link
                       color={'green.400'}
-                      onClick={() => loginState !== 'signin' && theLogin()}
+                      onClick={() =>
+                        loginState !== 'signin' && theLoginBtn('signin')
+                      }
                     >
                       {loginState === 'signin'
                         ? 'Forget Password ?'
@@ -366,7 +364,9 @@ function Login({ loginBtn, theLogin, theSignUP, lang }) {
                     {loginState === 'signin' && (
                       <Link
                         color={'green.400'}
-                        onClick={() => loginState === 'signin' && theSignUP()}
+                        onClick={() =>
+                          loginState === 'signin' && theLoginBtn('signup')
+                        }
                       >
                         {loginState === 'signin' && 'Don`t Have an account ?'}
                       </Link>
@@ -392,13 +392,4 @@ function Login({ loginBtn, theLogin, theSignUP, lang }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  loginBtn: state.main.loginBtn,
-  lang: state.main.lang
-});
-
-export default connect(mapStateToProps, {
-  theDefaultLoginBtn,
-  theLogin,
-  theSignUP
-})(Login);
+export default Login;

@@ -1,19 +1,14 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import Layout from '../component/Layout/Layout';
-import { Provider } from 'react-redux';
-import { useStore } from '../store';
+import Layout from '../src/components/Layout/Layout';
 import '../styles/main.scss';
-
+import theme from '../styles/theme';
 function MyApp({ Component, pageProps }) {
-  const store = useStore(pageProps.initialReduxState);
   return (
-    <Provider store={store}>
-      <ChakraProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ChakraProvider>
-    </Provider>
+    <ChakraProvider theme={theme}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </ChakraProvider>
   );
 }
 

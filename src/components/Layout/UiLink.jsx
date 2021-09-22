@@ -1,16 +1,12 @@
-import React from 'react';
 import {
   Link as UiLink,
   Stack,
   PopoverContent,
   PopoverTrigger,
-  useColorModeValue,
   Popover,
   Flex
 } from '@chakra-ui/react';
 const UiLinkItem = ({ vertical }) => {
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
-
   const navLinks = [
     { text: 'home', href: 'home' },
     {
@@ -25,8 +21,7 @@ const UiLinkItem = ({ vertical }) => {
     { text: 'donate', href: 'donate' },
     { text: 'contact us', href: 'contact' }
   ];
-  const childLinkColor = useColorModeValue('black', 'white');
-  const LinkColor = useColorModeValue('black', 'gray.200');
+
   return (
     <Flex
       alignItems='center'
@@ -42,9 +37,9 @@ const UiLinkItem = ({ vertical }) => {
         >
           <PopoverTrigger>
             <UiLink
+              color='gray.100'
               fontSize={vertical ? 'xl' : 'lg'}
               textTransform='capitalize'
-              color={LinkColor}
               href={navItem.href ? navItem.href : '#'}
               _hover={{
                 textDecoration: 'none',
@@ -61,7 +56,7 @@ const UiLinkItem = ({ vertical }) => {
             <PopoverContent
               border={0}
               boxShadow={'xl'}
-              bg={popoverContentBgColor}
+              backgroundColor='gray.700'
               p={4}
               rounded={'xl'}
               minW={'sm'}
@@ -69,9 +64,9 @@ const UiLinkItem = ({ vertical }) => {
               <Stack>
                 {navItem.children.map((child) => (
                   <UiLink
+                    color='gray.100'
                     key={child.text}
                     fontSize='lg'
-                    color={childLinkColor}
                     href={navItem.href ? navItem.href : '#'}
                     _hover={{
                       textDecoration: 'none',

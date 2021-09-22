@@ -1,5 +1,3 @@
-import arabicErrorMessage from '../../Translations/AR/loginUtcAR';
-import englishErrorMessage from '../../Translations/EN/loginUtcEN';
 export const checkMail = (registerData) => {
   const re = /^([a-zA-Z0-9_\-?\.?]+)@([a-zA-Z]){2,}\.([a-zA-Z]){2,5}$/;
   let problem = false;
@@ -9,7 +7,7 @@ export const checkMail = (registerData) => {
   return { problem };
 };
 
-export const checkRegister = (state, registerData, lang) => {
+export const checkRegister = (state, registerData) => {
   let error = false;
   let message = false;
 
@@ -17,40 +15,33 @@ export const checkRegister = (state, registerData, lang) => {
     if (!registerData.age || registerData.age < 5) {
       return {
         error: 'age',
-        message:
-          lang === 'ar' ? arabicErrorMessage.age : englishErrorMessage.age
+        message: 'العمر لا يمكن ان يقل عن 5 سنوات'
       };
     }
 
     if (registerData.name.length < 8) {
       return {
         error: 'name',
-        message:
-          lang === 'ar' ? arabicErrorMessage.name : englishErrorMessage.name
+        message: 'برجاء ادخال الاسم كاملا'
       };
     }
     const usernameREGEX = /^[\w|ء-ي]{4,}$/;
     if (!usernameREGEX.test(registerData.username)) {
       return {
         error: 'username',
-        message:
-          lang === 'ar'
-            ? arabicErrorMessage.username
-            : englishErrorMessage.username
+        message: 'تاكد من عدم وجود مسافة او استخدام رموز خاصة'
       };
     }
     if (!(registerData.type === 'student' || registerData.type === 'teacher')) {
       return {
         error: 'type',
-        message:
-          lang === 'ar' ? arabicErrorMessage.type : englishErrorMessage.type
+        message: 'برجاء اختيار نوع الحساب'
       };
     }
     if (!(registerData.gender === 'female' || registerData.gender === 'male')) {
       return {
         error: 'gender',
-        message:
-          lang === 'ar' ? arabicErrorMessage.gender : englishErrorMessage.gender
+        message: 'برجاء تحديد الجنس'
       };
     }
     const mail = checkMail(registerData).problem;
@@ -58,18 +49,14 @@ export const checkRegister = (state, registerData, lang) => {
     if (mail) {
       return {
         error: 'mail',
-        message:
-          lang === 'ar' ? arabicErrorMessage.email : englishErrorMessage.email
+        message: 'البريد الالكتروني خطا'
       };
     }
 
     if (registerData.password.length < 8) {
       return {
         error: 'password',
-        message:
-          lang === 'ar'
-            ? arabicErrorMessage.password
-            : englishErrorMessage.password
+        message: 'كلمة السر لا تقل عن 8 احرف'
       };
     }
   }
@@ -79,17 +66,13 @@ export const checkRegister = (state, registerData, lang) => {
     if (mail) {
       return {
         error: 'mail',
-        message:
-          lang === 'ar' ? arabicErrorMessage.email : englishErrorMessage.email
+        message: 'البريد الالكتروني خطا'
       };
     }
     if (registerData.password.length < 8) {
       return {
         error: 'password',
-        message:
-          lang === 'ar'
-            ? arabicErrorMessage.password
-            : englishErrorMessage.password
+        message: 'كلمة السر لا تقل عن 8 احرف'
       };
     }
   }
