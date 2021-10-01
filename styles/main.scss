@@ -1,9 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
 
-html {
-  font-size: 85%;
-}
-
 body {
   direction: rtl;
+}
+
+.svg-100 {
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+@media (max-width: 300px) {
+  .nav-Breadcrumb ol li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    span {
+      transform: rotateZ(270deg);
+    }
+  }
 }

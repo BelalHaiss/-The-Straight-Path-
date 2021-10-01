@@ -1,34 +1,38 @@
-import { Button, Flex } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Avatar,
+  PopoverBody,
+  PopoverArrow,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
+  Popover
+} from '@chakra-ui/react';
 import { useUserStore, useSettingsStore } from '../../zustand/store';
 
-const NavButtons = ({ vertical }) => {
-  const user = useUserStore((state) => state.user);
+const NavButtons = () => {
+  // const user = useUserStore((state) => state.user);
+  const user = true;
   const theLogout = useUserStore((state) => state.theLogout);
 
   const theLoginBtn = useSettingsStore((state) => state.theLoginBtn);
   return (
-    <Flex
-      alignItems='center'
-      direction={vertical && 'column'}
-      gridGap={vertical && '5'}
-      w='100%'
-    >
+    <>
       {user === null ? (
         <Flex
+          ml={{ base: '0', sm: '3' }}
           p='2'
-          borderTop={vertical && '1px'}
-          borderTopColor={'gray.500'}
-          justifyContent={vertical && 'space-between'}
           w='100%'
+          justifyContent='flex-end'
           alignItems='center'
           gridGap={1}
         >
           <Button
             onClick={() => theLoginBtn('signin')}
             size='sm'
-            w={vertical && '40%'}
-            colorScheme='green'
-            variant='ghost'
+            colorScheme='gray'
+            variant='outline'
           >
             دخول
           </Button>
@@ -37,25 +41,45 @@ const NavButtons = ({ vertical }) => {
             size='sm'
             mr={{ sm: 2 }}
             colorScheme='green'
-            w={vertical && '40%'}
             variant='solid'
+            whiteSpace='normal'
           >
             سجل مجانا
           </Button>
         </Flex>
       ) : (
-        <Button
-          onClick={theLogout}
-          display={{ base: `${isOpen ? 'block' : 'none'}`, sm: 'inherit' }}
-          size='sm'
-          mr={{ sm: 2 }}
-          colorScheme='red'
-          variant='solid'
+        <Flex
+          mt='1'
+          ml='2'
+          alignItems='center'
+          w='100%'
+          gridGap='2'
+          justifyContent='flex-end'
         >
-          Logout
-        </Button>
+          <Popover trigger='hover'>
+            <PopoverTrigger>
+              <Avatar size='sm' />
+            </PopoverTrigger>
+            <PopoverContent>
+              <PopoverArrow />
+              <PopoverBody>
+                <Button
+                  onClick={theLogout}
+                  size='sm'
+                  fontSize={{ base: '10px', sm: 'md' }}
+                  mr={{ sm: 2 }}
+                  colorScheme='red'
+                  variant='solid'
+                >
+                  Logout
+                </Button>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <Text> بلال</Text>
+        </Flex>
       )}
-    </Flex>
+    </>
   );
 };
 
