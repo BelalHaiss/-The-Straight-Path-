@@ -4,7 +4,7 @@ import {
   FormLabel,
   Input,
   Stack,
-  Link,
+  Link as uiLink,
   useDisclosure,
   Button,
   InputGroup,
@@ -18,15 +18,14 @@ import {
   Modal,
   Center
 } from '@chakra-ui/react';
-
+import Link from 'next/link';
 import { IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 
-import { FcCalendar } from 'react-icons/fc';
 import { MdEmail, MdLock } from 'react-icons/md';
 import { CgGenderMale, CgGenderFemale } from 'react-icons/cg';
-import { FaUserGraduate } from 'react-icons/fa';
-import { GiTeacher } from 'react-icons/gi';
+import GoogleLogin from 'react-google-login';
+
 import { checkRegister } from '../UTS/loginUTS';
 import { useSettingsStore } from '../../zustand/store';
 import Toast from '../UTS/Toast';
@@ -48,8 +47,7 @@ function Login() {
     username: '',
     email: '',
     password: '',
-    age: '',
-    type: '',
+
     gender: ''
   });
   const onChange = (e) => {
@@ -80,7 +78,9 @@ function Login() {
     //  data);
   };
   // alert('everything is good :D');
-
+  const responseGoogle = (response) => {
+    console.log(response);
+  };
   useEffect(() => {
     switch (loginBtn) {
       case 'signin':
@@ -93,13 +93,14 @@ function Login() {
         return onOpen();
     }
   }, [loginBtn, onOpen]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
       <ModalContent>
         <ModalHeader textAlign='center'>
-          {loginState === 'signin' ? 'Login In' : 'Create a new account '}
+          {loginState === 'signin' ? 'تسجيل الدخول' : 'انشاء حساب جديد '}
         </ModalHeader>
         <ModalCloseButton />
 
@@ -110,27 +111,54 @@ function Login() {
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-around'
             >
-              <Button
-                w={{ base: '100%', sm: 40 }}
-                mb={{ base: 2, sm: '' }}
-                size='lg'
-                colorScheme='facebook'
-                leftIcon={<IoLogoFacebook />}
-              >
-                Facebook
-              </Button>
-              <Button
-                w={{ base: '100%', sm: 40 }}
-                size='lg'
-                colorScheme='red'
-                leftIcon={<IoLogoGoogle />}
-              >
-                Google
-              </Button>
+              <Link href='https://localhost:5000/api/auth/facebook'>
+                <Button
+                  w={{ base: '100%', sm: 40 }}
+                  mb={{ base: 2, sm: '' }}
+                  size='lg'
+                  fontSize='10px'
+                  colorScheme='facebook'
+                  rightIcon={<IoLogoFacebook fontSize='25px' />}
+                >
+                  باستخدام حساب فيسبوك
+                </Button>
+              </Link>
+              <Link href='http://localhost:5000/api/auth/google'>
+                <Button
+                  w={{ base: '100%', sm: 40 }}
+                  size='lg'
+                  fontSize='10px'
+                  colorScheme='red'
+                  rightIcon={<IoLogoGoogle fontSize='25px' />}
+                >
+                  باستخدام حساب جوجل
+                </Button>
+              </Link>
+
+              {/* <GoogleLogin
+                clientId='658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com'
+                render={(renderProps) => (
+                  <Button
+                  onClick={renderProps.onClick}
+                  disabled={renderProps.disabled}
+                  w={{ base: '100%', sm: 40 }}
+                  size='lg'
+                  fontSize='10px'
+                  colorScheme='red'
+                  rightIcon={<IoLogoGoogle fontSize='25px' />}
+                >
+                  باستخدام حساب جوجل
+                </Button>
+                )}
+                buttonText='Login'
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy={'single_host_origin'}
+              /> */}
             </Flex>
             <hr />
-            <Center fontSize='md' fontWeight='bold'>
-              OR
+            <Center fontSize='lg' fontWeight='bold'>
+              او
             </Center>
             <form
               action='/api/auth'
@@ -143,16 +171,9 @@ function Login() {
                     isInvalid={formSubmited && registerData.name.length < 8}
                     id='name'
                   >
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>الاسم بالكامل</FormLabel>
 
                     <InputGroup size='sm'>
-                      <InputLeftAddon
-                        pointerEvents='none'
-                        w='30%'
-                        fontSize='0.7rem'
-                        // eslint-disable-next-line
-                        children={'e.g ' + 'Mohammed Rady'}
-                      />
                       <Input
                         value={registerData.name}
                         size='sm'
@@ -166,15 +187,8 @@ function Login() {
                     id='username'
                     isInvalid={formSubmited && registerData.username.length < 4}
                   >
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>اسم المستخدم </FormLabel>
                     <InputGroup size='sm'>
-                      <InputLeftAddon
-                        pointerEvents='none'
-                        w='30%'
-                        fontSize='0.7rem'
-                        // eslint-disable-next-line
-                        children={'e.g ' + 'Medo10'}
-                      />
                       <Input
                         size='sm'
                         value={registerData.username}
@@ -184,29 +198,10 @@ function Login() {
                       />
                     </InputGroup>
                   </FormControl>
-                  <FormControl
-                    id='age'
-                    isInvalid={formSubmited && registerData.age < 5}
-                  >
-                    <FormLabel>Age</FormLabel>
-                    <InputGroup size='sm'>
-                      <InputLeftAddon
-                        pointerEvents='none'
-                        // eslint-disable-next-line
-                        children={<FcCalendar fontSize='1.5rem' />}
-                      />
-                      <Input
-                        name='age'
-                        value={registerData.age}
-                        type='number'
-                        onChange={onChange}
-                      />
-                    </InputGroup>
-                  </FormControl>
 
                   <FormControl mt='3' id='gender'>
                     <FormLabel fontWeight='medium' fontSize='lg' p='1'>
-                      Gender
+                      الجنس
                     </FormLabel>
                     <Flex
                       justifyContent='space-between'
@@ -231,7 +226,7 @@ function Login() {
                         fontSize='lg'
                         leftIcon={<CgGenderFemale />}
                       >
-                        Female
+                        انثي
                       </Button>
                       <Button
                         colorScheme='green'
@@ -246,51 +241,7 @@ function Login() {
                         w='45%'
                         fontSize='lg'
                       >
-                        MALE
-                      </Button>
-                    </Flex>
-                  </FormControl>
-                  <FormControl mt='3' id='gender'>
-                    <FormLabel fontWeight='medium' fontSize='lg' p='1'>
-                      Account Type:
-                    </FormLabel>
-                    <Flex
-                      justifyContent='space-between'
-                      gridGap='1'
-                      p='1'
-                      alignItems='center'
-                      border={formSubmited && !registerData.type && '2px'}
-                      borderColor={formSubmited && !registerData.type && 'red'}
-                    >
-                      <Button
-                        w='45%'
-                        colorScheme='blue'
-                        p='1'
-                        name='type'
-                        value='student'
-                        variant={
-                          registerData.type === 'student' ? 'solid' : 'outline'
-                        }
-                        onClick={onChange}
-                        fontSize='lg'
-                        leftIcon={<FaUserGraduate />}
-                      >
-                        Student
-                      </Button>
-                      <Button
-                        colorScheme='blue'
-                        p='1'
-                        name='type'
-                        value='teacher'
-                        variant={
-                          registerData.type === 'teacher' ? 'solid' : 'outline'
-                        }
-                        onClick={onChange}
-                        leftIcon={<GiTeacher />}
-                        w='45%'
-                        fontSize='lg'
-                      >
-                        Teacher
+                        ذكر
                       </Button>
                     </Flex>
                   </FormControl>
@@ -303,13 +254,13 @@ function Login() {
                   (registerData.email === '' || emailError === true)
                 }
               >
-                <FormLabel>Email address</FormLabel>
+                <FormLabel>البريد الالكتروني </FormLabel>
                 <InputGroup size='sm'>
                   <InputLeftAddon
                     pointerEvents='none'
                     fontSize='0.7rem'
                     // eslint-disable-next-line
-                    children={<MdEmail fontSize='1.5rem' />}
+                    children={<MdEmail color='#023047' fontSize='1.5rem' />}
                   />
                   <Input
                     size='sm'
@@ -325,13 +276,13 @@ function Login() {
                 id='password'
                 isInvalid={formSubmited && registerData.password.length < 8}
               >
-                <FormLabel>Password</FormLabel>
+                <FormLabel>كلمة السر</FormLabel>
                 <InputGroup size='sm'>
                   <InputLeftAddon
                     pointerEvents='none'
                     fontSize='0.5rem'
                     // eslint-disable-next-line
-                    children={<MdLock fontSize='1.5rem' />}
+                    children={<MdLock color='#023047' fontSize='1.5rem' />}
                   />
                   <Input
                     size='sm'
@@ -351,25 +302,25 @@ function Login() {
                   justify={'space-between'}
                 >
                   <Flex direction='column'>
-                    <Link
-                      color={'green.400'}
+                    <uiLink
+                      color={'#c1121f'}
                       onClick={() =>
                         loginState !== 'signin' && theLoginBtn('signin')
                       }
                     >
                       {loginState === 'signin'
-                        ? 'Forget Password ?'
-                        : 'Already Have An Account ?'}
-                    </Link>
+                        ? 'نسيت كلمة السر ؟'
+                        : 'لديك حساب بالفعل ؟'}
+                    </uiLink>
                     {loginState === 'signin' && (
-                      <Link
-                        color={'green.400'}
+                      <uiLink
+                        color={'#081c15'}
                         onClick={() =>
                           loginState === 'signin' && theLoginBtn('signup')
                         }
                       >
-                        {loginState === 'signin' && 'Don`t Have an account ?'}
-                      </Link>
+                        {loginState === 'signin' && 'انشاء حساب جديد ؟'}
+                      </uiLink>
                     )}
                   </Flex>
                 </Stack>

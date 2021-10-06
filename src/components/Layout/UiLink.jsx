@@ -67,7 +67,7 @@ const UiLinkItem = ({ isOpen }) => {
             <MenuButton
               rightIcon={<Icon as={BsFillCaretDownFill} w={2} h={2} />}
               as={Button}
-              fontSize={{ base: '10px', sm: '15px', lg: 'lg' }}
+              fontSize={{ sm: '15px', lg: 'lg' }}
               color={activePage.text === navItem.text ? 'gray.200' : 'gray.600'}
               transition='all 0.2s'
               backgroundColor={activePage.text === navItem.text && 'green.400'}
@@ -94,7 +94,7 @@ const UiLinkItem = ({ isOpen }) => {
                         href: navItem.href
                       })
                     }
-                    fontSize={{ base: '10px', sm: 'md', lg: 'lg' }}
+                    fontSize={{ sm: 'md', lg: 'lg' }}
                     _hover={{ bg: 'green.400' }}
                     display='flex'
                     justifyContent='space-between'
@@ -128,7 +128,7 @@ const UiLinkItem = ({ isOpen }) => {
                 theActivePage({ text: navItem.text, href: navItem.href })
               }
               color={active.text === navItem.text ? 'green.400' : 'gray.600'}
-              fontSize={{ base: '10px', sm: 'md', lg: 'lg' }}
+              fontSize={{ sm: 'md', lg: 'lg' }}
               textTransform='capitalize'
               fontWeight='bold'
               textAlign='center'

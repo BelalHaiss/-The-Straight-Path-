@@ -12,8 +12,7 @@ import {
 import { useUserStore, useSettingsStore } from '../../zustand/store';
 
 const NavButtons = () => {
-  // const user = useUserStore((state) => state.user);
-  const user = true;
+  const user = useUserStore((state) => state.user);
   const theLogout = useUserStore((state) => state.theLogout);
 
   const theLoginBtn = useSettingsStore((state) => state.theLoginBtn);

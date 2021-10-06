@@ -63,7 +63,7 @@ const Nav = () => {
         alignItems='center'
         flexDirection='column'
         bottom='5%'
-        boxShadow='xl'
+        boxShadow='2xl'
         display={{ base: 'none', sm: `${isOpen ? 'none' : 'block'}` }}
       >
         <Image src='/brand1.png' alt='logo' w='150px' />
@@ -84,7 +84,7 @@ const Nav = () => {
             alignItems='center'
             flexDirection='column'
             bottom='5%'
-            boxShadow='xl'
+            boxShadow='2xl'
           >
             <Image
               display={!isOpen && 'none'}

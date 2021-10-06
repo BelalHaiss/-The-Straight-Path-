@@ -8,7 +8,7 @@ const theme = extendTheme({
     global: {
       // styles for the `body`
       body: {
-        bgGradient: 'linear(to-r, #c0fdff,#ffc8dd, #caffbf)',
+        bgGradient: 'linear(to-r, #c0fdff,#cad2c5, #caffbf)',
         zIndex: '-20'
       },
       main: {

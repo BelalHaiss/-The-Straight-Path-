@@ -12,13 +12,6 @@ export const checkRegister = (state, registerData) => {
   let message = false;
 
   if (state === 'signup') {
-    if (!registerData.age || registerData.age < 5) {
-      return {
-        error: 'age',
-        message: 'العمر لا يمكن ان يقل عن 5 سنوات'
-      };
-    }
-
     if (registerData.name.length < 8) {
       return {
         error: 'name',
@@ -32,12 +25,7 @@ export const checkRegister = (state, registerData) => {
         message: 'تاكد من عدم وجود مسافة او استخدام رموز خاصة'
       };
     }
-    if (!(registerData.type === 'student' || registerData.type === 'teacher')) {
-      return {
-        error: 'type',
-        message: 'برجاء اختيار نوع الحساب'
-      };
-    }
+
     if (!(registerData.gender === 'female' || registerData.gender === 'male')) {
       return {
         error: 'gender',
