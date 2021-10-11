@@ -22,7 +22,7 @@ export const checkRegister = (state, registerData) => {
     if (!usernameREGEX.test(registerData.username)) {
       return {
         error: 'username',
-        message: 'تاكد من عدم وجود مسافة او استخدام رموز خاصة'
+        message: 'تاكد من عدم وجود مسافة او استخدام رموز خاصة ولا يقل عن 4 احرف'
       };
     }
 

@@ -9,16 +9,21 @@ import {
   Text,
   Popover
 } from '@chakra-ui/react';
-import { useUserStore, useSettingsStore } from '../../zustand/store';
-
+import { useEffect } from 'react';
+import { useStore } from '../../zustand/store';
+const firstName = (name) => {
+  const i = name.indexOf(' ');
+  const fName = name.slice(0, i);
+  return fName;
+};
 const NavButtons = () => {
-  const user = useUserStore((state) => state.user);
-  const theLogout = useUserStore((state) => state.theLogout);
+  const user = useStore((state) => state.user);
+  const theLogout = useStore((state) => state.theLogout);
+  const theLoginBtn = useStore((state) => state.theLoginBtn);
 
-  const theLoginBtn = useSettingsStore((state) => state.theLoginBtn);
   return (
     <>
-      {user === null ? (
+      {!user ? (
         <Flex
           ml={{ base: '0', sm: '3' }}
           p='2'
@@ -57,9 +62,22 @@ const NavButtons = () => {
         >
           <Popover trigger='hover'>
             <PopoverTrigger>
-              <Avatar size='sm' />
+              <Avatar
+                colorScheme={'whiteAlpha'}
+                name={user.name}
+                src={
+                  user.gender &&
+                  ((user.gender === 'female' && '/girl.png') ||
+                    (user.gender === 'male' && '/boy.png'))
+                }
+                size='sm'
+              />
             </PopoverTrigger>
-            <PopoverContent>
+            <PopoverContent
+              maxW='200px'
+              background='gray.200'
+              alignItems='center'
+            >
               <PopoverArrow />
               <PopoverBody>
                 <Button
@@ -75,7 +93,7 @@ const NavButtons = () => {
               </PopoverBody>
             </PopoverContent>
           </Popover>
-          <Text> بلال</Text>
+          <Text> {user ? firstName(user.name) : 'مرحبا'}</Text>
         </Flex>
       )}
     </>

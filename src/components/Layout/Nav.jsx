@@ -15,16 +15,16 @@ import { useRouter } from 'next/router';
 import { HiMenuAlt1, HiOutlineX, HiChevronLeft } from 'react-icons/hi';
 import { useEffect } from 'react';
 import UiLinkItem from './UiLink';
-import { useSettingsStore } from '../../zustand/store';
+import { useStore } from '../../zustand/store';
 import NavButtons from './NavButtons';
 const Nav = () => {
   const router = useRouter();
 
   const paths = router.pathname.split('/');
+  console.log(paths);
+  const activePage = useStore((state) => state.activePage);
 
-  const activePage = useSettingsStore((state) => state.activePage);
-
-  const theActivePage = useSettingsStore((state) => state.theActivePage);
+  const theActivePage = useStore((state) => state.theActivePage);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
@@ -41,7 +41,8 @@ const Nav = () => {
             return 'تعلم التلاوة';
           case 'contact':
             return 'تواصل معنا';
-
+          case 'users':
+            return 'الحساب الشخصي';
           default:
             return 'الصفحة الرئيسية ';
         }
@@ -124,13 +125,6 @@ const Nav = () => {
               {activePage.text}
             </Link>
           </BreadcrumbItem>
-          {paths.length === 3 && (
-            <BreadcrumbItem color='black'>
-              <Link href={paths[2]}>
-                {paths[2] === 'group' ? 'مجموعة ' : 'مجموعة خاصة'}
-              </Link>
-            </BreadcrumbItem>
-          )}
         </Breadcrumb>
         <NavButtons />
       </Flex>

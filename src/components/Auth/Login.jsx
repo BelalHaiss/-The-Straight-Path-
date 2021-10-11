@@ -4,7 +4,7 @@ import {
   FormLabel,
   Input,
   Stack,
-  Link as uiLink,
+  Link as UiLink,
   useDisclosure,
   Button,
   InputGroup,
@@ -21,21 +21,20 @@ import {
 import Link from 'next/link';
 import { IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
-
+import { useRouter } from 'next/router';
 import { MdEmail, MdLock } from 'react-icons/md';
 import { CgGenderMale, CgGenderFemale } from 'react-icons/cg';
-import GoogleLogin from 'react-google-login';
 
 import { checkRegister } from '../UTS/loginUTS';
-import { useSettingsStore } from '../../zustand/store';
+import { useStore } from '../../zustand/store';
 import Toast from '../UTS/Toast';
-import axios from 'axios';
+import { fetcher } from '../UTS/fetcher';
 function Login() {
-  const loginBtn = useSettingsStore((state) => state.loginBtn);
-  const theDefaultLoginBtn = useSettingsStore(
-    (state) => state.theDefaultLoginBtn
-  );
-  const theLoginBtn = useSettingsStore((state) => state.theLoginBtn);
+  const loginBtn = useStore((state) => state.loginBtn);
+  const theDefaultLoginBtn = useStore((state) => state.theDefaultLoginBtn);
+  const theLoginBtn = useStore((state) => state.theLoginBtn);
+  const theSetUser = useStore((state) => state.theSetUser);
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loginState, setLoginState] = useState('signin');
 
@@ -51,6 +50,7 @@ function Login() {
     gender: ''
   });
   const onChange = (e) => {
+    setFormSubmited(false);
     e.target.name === 'email' && setEmailError(false);
     setRegisterData({ ...registerData, [e.target.name]: e.target.value });
   };
@@ -66,21 +66,71 @@ function Login() {
     }
     if (loginState === 'signup') {
       try {
-        const data = await axios.post(
+        const data = await fetcher(
           'http://localhost:5000/api/auth',
+          'POST',
           registerData
         );
+        if (data) {
+          theSetUser(data);
+          setRegisterData({});
+          onClose();
+          let welcomeMsg = 'السلام عليكم  ' + data.name;
+          Toast('تم انشاء الحساب بنجاح', welcomeMsg, 'success');
+          router.replace('/users/' + data.username);
+        }
       } catch (e) {
-        console.dir(e.response.data.error);
-        alert(e.response.data.error);
+        const theError = e.message;
+
+        let errorMessage;
+
+        switch (theError) {
+          case 'undefined':
+            errorMessage = 'خطاء في البيانات ';
+            break;
+          case 'email':
+            errorMessage = 'البريد الالكتروني مسجل بالفعل ';
+            break;
+          case 'username':
+            errorMessage = 'اسم المستخدم مسجل بالفعل ';
+            break;
+          default:
+            errorMessage = 'خطاء في البيانات ';
+        }
+        return Toast('خطاء عند تسجيل الحساب', errorMessage);
+      }
+    } else {
+      try {
+        const { email, password } = registerData;
+        const data = await fetcher(
+          'http://localhost:5000/api/auth/login',
+          'POST',
+          {
+            email,
+            password
+          }
+        );
+        if (data) {
+          theSetUser(data);
+          setRegisterData({});
+          onClose();
+          let welcomeMsg = 'السلام عليكم  ' + data.name;
+          Toast(welcomeMsg, null, 'success');
+          router.replace('/users/' + data.username);
+        }
+      } catch (error) {
+        let errorMSG =
+          error.message === 'email'
+            ? 'هذا البريد الاكتروني غير مسجل'
+            : 'تاكد من البريد الاكتروني وكلمة السر';
+
+        return Toast('خطاء عند تسجيل  الدخول', errorMSG);
       }
     }
     //  data);
   };
   // alert('everything is good :D');
-  const responseGoogle = (response) => {
-    console.log(response);
-  };
+
   useEffect(() => {
     switch (loginBtn) {
       case 'signin':
@@ -92,6 +142,7 @@ function Login() {
         setTimeout(theDefaultLoginBtn, [100]);
         return onOpen();
     }
+    return () => onClose;
   }, [loginBtn, onOpen]);
 
   return (
@@ -111,7 +162,7 @@ function Login() {
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-around'
             >
-              <Link href='https://localhost:5000/api/auth/facebook'>
+              <Link passHref href='https://localhost:5000/api/auth/facebook'>
                 <Button
                   w={{ base: '100%', sm: 40 }}
                   mb={{ base: 2, sm: '' }}
@@ -123,7 +174,7 @@ function Login() {
                   باستخدام حساب فيسبوك
                 </Button>
               </Link>
-              <Link href='http://localhost:5000/api/auth/google'>
+              <Link passHref href='http://localhost:5000/api/auth/google'>
                 <Button
                   w={{ base: '100%', sm: 40 }}
                   size='lg'
@@ -134,27 +185,6 @@ function Login() {
                   باستخدام حساب جوجل
                 </Button>
               </Link>
-
-              {/* <GoogleLogin
-                clientId='658977310896-knrl3gka66fldh83dao2rhgbblmd4un9.apps.googleusercontent.com'
-                render={(renderProps) => (
-                  <Button
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                  w={{ base: '100%', sm: 40 }}
-                  size='lg'
-                  fontSize='10px'
-                  colorScheme='red'
-                  rightIcon={<IoLogoGoogle fontSize='25px' />}
-                >
-                  باستخدام حساب جوجل
-                </Button>
-                )}
-                buttonText='Login'
-                onSuccess={responseGoogle}
-                onFailure={responseGoogle}
-                cookiePolicy={'single_host_origin'}
-              /> */}
             </Flex>
             <hr />
             <Center fontSize='lg' fontWeight='bold'>
@@ -302,8 +332,12 @@ function Login() {
                   justify={'space-between'}
                 >
                   <Flex direction='column'>
-                    <uiLink
-                      color={'#c1121f'}
+                    <UiLink
+                      color={loginState === 'signin' ? '#c1121f' : 'gray.800'}
+                      fontWeight='bold'
+                      _hover={{
+                        color: 'green.500'
+                      }}
                       onClick={() =>
                         loginState !== 'signin' && theLoginBtn('signin')
                       }
@@ -311,20 +345,25 @@ function Login() {
                       {loginState === 'signin'
                         ? 'نسيت كلمة السر ؟'
                         : 'لديك حساب بالفعل ؟'}
-                    </uiLink>
+                    </UiLink>
                     {loginState === 'signin' && (
-                      <uiLink
-                        color={'#081c15'}
+                      <UiLink
+                        color={'gray.800'}
+                        _hover={{
+                          background: 'white',
+                          color: 'green.500'
+                        }}
                         onClick={() =>
                           loginState === 'signin' && theLoginBtn('signup')
                         }
                       >
                         {loginState === 'signin' && 'انشاء حساب جديد ؟'}
-                      </uiLink>
+                      </UiLink>
                     )}
                   </Flex>
                 </Stack>
                 <Button
+                  isDisabled={formSubmited}
                   bg={'green.400'}
                   color={'white'}
                   type='submit'

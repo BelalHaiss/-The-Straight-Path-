@@ -12,14 +12,15 @@ import {
 import Link from 'next/link';
 import { BsFillCaretDownFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
-import { useSettingsStore } from '../../zustand/store';
+import { useStore } from '../../zustand/store';
 const UiLinkItem = ({ isOpen }) => {
-  const activePage = useSettingsStore((state) => state.activePage);
+  const activePage = useStore((state) => state.activePage);
   const [active, setActive] = useState('');
   useEffect(() => {
     setActive(activePage);
   }, [activePage]);
-  const theActivePage = useSettingsStore((state) => state.theActivePage);
+  const user = useStore((state) => state.user);
+  const theActivePage = useStore((state) => state.theActivePage);
   const navLinks = [
     { text: 'الصفحة الرئيسية', href: '/' },
     {
@@ -73,8 +74,8 @@ const UiLinkItem = ({ isOpen }) => {
               backgroundColor={activePage.text === navItem.text && 'green.400'}
               textAlign='center'
               borderRadius='md'
-              whiteSpace={isOpen ? 'nowrap' : 'normal'}
-              w={{ base: '100px', sm: 'auto' }}
+              // whiteSpace={isOpen ? 'nowrap' : 'normal'}
+              w={{ base: `${isOpen ? 'auto' : '100px'}`, sm: 'auto' }}
               borderWidth='1px'
               _hover={{ bg: 'green.400', color: 'gray.200' }}
               _expanded={{ bg: 'green.400', color: 'gray.200' }}

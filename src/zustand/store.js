@@ -1,19 +1,71 @@
 import create from 'zustand';
-import { persist, devtools } from 'zustand/middleware';
-
-let settingsStore = (set) => ({
+import { useLayoutEffect } from 'react';
+import createContext from 'zustand/context';
+import { devtools } from 'zustand/middleware';
+import { fetcher } from '../components/UTS/fetcher';
+let store;
+const initialState = {
   loginBtn: false,
-  theLoginBtn: (type) => set((state) => ({ ...state, loginBtn: type })),
-  theDefaultLoginBtn: () => set((state) => ({ ...state, loginBtn: false })),
   activePage: { text: '', href: '' },
-  theActivePage: (path) => set((state) => ({ ...state, activePage: path }))
-});
-settingsStore = persist(settingsStore);
-let userStore = (set) => ({
   user: null,
-  theSetUser: (user) => set((state) => ({ ...state, user })),
-  theLogout: () => set((state) => ({ ...state, user: null }))
-});
+  loading: { state: true, checked: false }
+};
 
-export const useUserStore = create(devtools(userStore));
-export const useSettingsStore = create(devtools(settingsStore));
+const zustandContext = createContext();
+export const Provider = zustandContext.Provider;
+// An example of how to get types
+/** @type {import('zustand/index').UseStore<typeof initialState>} */
+export const useStore = zustandContext.useStore;
+
+export const initializeStore = (preloadedState = {}) => {
+  return create(
+    devtools((set, get) => ({
+      ...initialState,
+      ...preloadedState,
+      theLoginBtn: (type) => set((state) => ({ loginBtn: type })),
+      theDefaultLoginBtn: () => set((state) => ({ loginBtn: false })),
+      theActivePage: (path) => set((state) => ({ activePage: path })),
+      theSetUser: (user) => set({ user: user }),
+      theSetLoading: () =>
+        set({
+          loading: {
+            state: !get().loading.state,
+            checked: !get().loading.checked
+          }
+        }),
+      theLogout: async () => {
+        try {
+          set({ user: null });
+          await fetcher('auth/logout');
+        } catch (error) {
+          return null;
+        }
+      }
+    }))
+  );
+};
+
+export function useCreateStore(initialState) {
+  // For SSR & SSG, always use a new store.
+  if (typeof window === 'undefined') {
+    return () => initializeStore(initialState);
+  }
+
+  // For CSR, always re-use same store.
+  store = store ?? initializeStore(initialState);
+  // And if initialState changes, then merge states in the next render cycle.
+  //
+  // eslint complaining "React Hooks must be called in the exact same order in every component render"
+  // is ignorable as this code runs in same order in a given environment
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useLayoutEffect(() => {
+    if (initialState && store) {
+      store.setState({
+        ...store.getState(),
+        ...initialState
+      });
+    }
+  }, [initialState]);
+
+  return () => store;
+}

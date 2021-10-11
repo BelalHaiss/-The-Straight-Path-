@@ -1,17 +1,44 @@
-import { useEffect, Fragment } from 'react';
+import { useEffect, Fragment, useState } from 'react';
 import Login from '../Auth/Login';
 import Nav from './Nav';
-import { Wrap } from '@chakra-ui/react';
-import { useSettingsStore } from '../../zustand/store';
-
+import Loader from './Loader';
+import { useRouter } from 'next/router';
+import useSWR, { SWRConfig } from 'swr';
+import Toast from '../UTS/Toast';
+import { useStore } from '../../zustand/store';
+import { fetcher } from '../UTS/fetcher';
 const Layout = ({ children }) => {
-  // const activePage = useSettingsStore((state) => state.activePage);
+  const { data, error } = useSWR('/users', fetcher, {
+    onSuccess: (data) => {
+      if (!user) {
+        theSetUser(data);
+        let welcomeMsg = 'السلام عليكم  ';
+        Toast(welcomeMsg, data.name, 'success');
+        router.replace('/users/' + data.username);
+      }
+    }
+  });
+  const router = useRouter();
+  const theSetUser = useStore((state) => state.theSetUser);
+  const user = useStore((state) => state.user);
+  // browser is  hanging
 
-  // useEffect(() => {}, [activePage]);
+  // useEffect(() => {
+  //   //  works fine :)
+  //   if (data) {
+  //     theSetUser(data);
+  //     let welcomeMsg = 'السلام عليكم  ';
+  //     Toast(welcomeMsg, data.name, 'success');
+  //     router.push('/users/' + data._id);
+  //   }
+  // }, [data]);
+  if (!data && !error) {
+    return <Loader />;
+  }
   return (
     <Fragment>
       <Nav />
-      <Login />
+      {!user && <Login />}
       <main>{children}</main>
     </Fragment>
   );
