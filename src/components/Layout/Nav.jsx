@@ -21,7 +21,6 @@ const Nav = () => {
   const router = useRouter();
 
   const paths = router.pathname.split('/');
-  console.log(paths);
   const activePage = useStore((state) => state.activePage);
 
   const theActivePage = useStore((state) => state.theActivePage);
@@ -42,7 +41,7 @@ const Nav = () => {
           case 'contact':
             return 'تواصل معنا';
           case 'users':
-            return 'الحساب الشخصي';
+            return 'حسابي';
           default:
             return 'الصفحة الرئيسية ';
         }
@@ -93,7 +92,7 @@ const Nav = () => {
               alt='logo'
               w='150px'
             />
-            <UiLinkItem isOpen={isOpen} />
+            <UiLinkItem onClose={onClose} isOpen={isOpen} />
           </Flex>
         </Slide>
       </Wrap>

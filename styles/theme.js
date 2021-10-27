@@ -22,8 +22,22 @@ const theme = extendTheme({
         zIndex: '-1',
         borderRadius: 'xl',
         mr: { base: '0', sm: '2' },
+        overflow: "auto",
         boxShadow: 'xl',
         bottom: '20%'
+      },
+      footer: {
+        p: '2',
+        position: 'fixed',
+        bottom: '2%',
+        bg: 'gray.50',
+        borderRadius: 'xl',
+        zIndex: '-1',
+
+        mt: '1',
+        boxShadow: 'xl',
+        left: '5%',
+        right: { base: '5%', sm: '29%', md: '25%' }
       }
     }
   }

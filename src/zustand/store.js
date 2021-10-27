@@ -7,8 +7,7 @@ let store;
 const initialState = {
   loginBtn: false,
   activePage: { text: '', href: '' },
-  user: null,
-  loading: { state: true, checked: false }
+  user: null
 };
 
 const zustandContext = createContext();

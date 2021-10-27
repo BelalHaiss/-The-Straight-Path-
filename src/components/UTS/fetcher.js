@@ -12,6 +12,8 @@ export const fetcher = async (url, method = 'get', data = null) => {
 
     return res.data;
   } catch (error) {
-    throw Error(error.response.data || 'حدث خطا');
+    console.dir(error,'fetcher error');
+
+    throw new Error(error.response.data || 'حدث خطا');
   }
 };

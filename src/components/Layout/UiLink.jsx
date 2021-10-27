@@ -11,17 +11,37 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { BsFillCaretDownFill } from 'react-icons/bs';
-import { useEffect, useState } from 'react';
+import { useCallback, memo } from 'react';
 import { useStore } from '../../zustand/store';
-const UiLinkItem = ({ isOpen }) => {
-  const activePage = useStore((state) => state.activePage);
-  const [active, setActive] = useState('');
-  useEffect(() => {
-    setActive(activePage);
-  }, [activePage]);
+import SingleLink from './SingleLink';
+const UiLinkItem = ({ onClose, isOpen }) => {
   const user = useStore((state) => state.user);
-  const theActivePage = useStore((state) => state.theActivePage);
-  const navLinks = [
+  const theActivePage = useStore(
+    useCallback((state) => state.theActivePage, [activePage])
+  );
+  const activePage = useStore(
+    useCallback((state) => state.activePage, [activePage])
+  );
+  const commonLinks = {
+    user: [
+      { text: 'حسابي', href: '/users/' + user?.username },
+      { text: 'مجموعتي', href: '/groups' },
+      { text: 'المعاملات النقدية', href: '/transactions' },
+      { text: 'ملاحظات هامة', href: '/notes' }
+    ],
+    admin: [
+      { text: 'جميع الطلبات', href: '/requests' },
+      { text: 'جميع المجاميع', href: '/groups' }
+    ]
+  };
+  const usersLinks = {
+    teacher: [...commonLinks.user],
+    student: [...commonLinks.user],
+    admin: [...commonLinks.admin],
+    moderator: [...commonLinks.admin]
+  };
+
+  const generalLinks = [
     { text: 'الصفحة الرئيسية', href: '/' },
     {
       text: 'حفظ القرآن',
@@ -62,7 +82,18 @@ const UiLinkItem = ({ isOpen }) => {
       flexDirection={'column'}
       p='1'
     >
-      {navLinks.map((navItem) => {
+      {user &&
+        usersLinks[user.accountType].map((navItem) => (
+          <SingleLink
+            key={navItem.text}
+            navItem={navItem}
+            theActivePage={theActivePage}
+            activePage={activePage}
+            isOpen={isOpen}
+            onClose={onClose}
+          />
+        ))}
+      {generalLinks.map((navItem) => {
         return navItem.children ? (
           <Menu key={navItem.text}>
             <MenuButton
@@ -89,12 +120,13 @@ const UiLinkItem = ({ isOpen }) => {
               {navItem.children.map((child) => (
                 <Link passHref key={child.text} href={child.href}>
                   <MenuItem
-                    onClick={() =>
+                    onClick={() => {
+                      isOpen && onClose();
                       theActivePage({
                         text: navItem.text,
                         href: navItem.href
-                      })
-                    }
+                      });
+                    }}
                     fontSize={{ sm: 'md', lg: 'lg' }}
                     _hover={{ bg: 'green.400' }}
                     display='flex'
@@ -119,33 +151,18 @@ const UiLinkItem = ({ isOpen }) => {
             </MenuList>
           </Menu>
         ) : (
-          <Link
+          <SingleLink
             key={navItem.text}
-            passHref
-            href={navItem.href ? navItem.href : '#'}
-          >
-            <UiLink
-              onClick={() =>
-                theActivePage({ text: navItem.text, href: navItem.href })
-              }
-              color={active.text === navItem.text ? 'green.400' : 'gray.600'}
-              fontSize={{ sm: 'md', lg: 'lg' }}
-              textTransform='capitalize'
-              fontWeight='bold'
-              textAlign='center'
-              _hover={{
-                textDecoration: 'none',
-                color: 'green.400'
-              }}
-              mr={{ sm: 2 }}
-            >
-              {navItem.text}
-            </UiLink>
-          </Link>
+            navItem={navItem}
+            theActivePage={theActivePage}
+            activePage={activePage}
+            onClose={onClose}
+            isOpen={isOpen}
+          />
         );
       })}
     </Flex>
   );
 };
 
-export default UiLinkItem;
+export default memo(UiLinkItem);

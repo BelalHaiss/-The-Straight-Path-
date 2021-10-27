@@ -7,6 +7,8 @@ import useSWR, { SWRConfig } from 'swr';
 import Toast from '../UTS/Toast';
 import { useStore } from '../../zustand/store';
 import { fetcher } from '../UTS/fetcher';
+import Meta from '../Meta'
+import Footer from './Footer';
 const Layout = ({ children }) => {
   const { data, error } = useSWR('/users', fetcher, {
     onSuccess: (data) => {
@@ -21,25 +23,18 @@ const Layout = ({ children }) => {
   const router = useRouter();
   const theSetUser = useStore((state) => state.theSetUser);
   const user = useStore((state) => state.user);
-  // browser is  hanging
-
-  // useEffect(() => {
-  //   //  works fine :)
-  //   if (data) {
-  //     theSetUser(data);
-  //     let welcomeMsg = 'السلام عليكم  ';
-  //     Toast(welcomeMsg, data.name, 'success');
-  //     router.push('/users/' + data._id);
-  //   }
-  // }, [data]);
+  
   if (!data && !error) {
     return <Loader />;
   }
+
   return (
     <Fragment>
-      <Nav />
+      <Meta />
+      <Nav user={user} />
       {!user && <Login />}
       <main>{children}</main>
+      <Footer />
     </Fragment>
   );
 };

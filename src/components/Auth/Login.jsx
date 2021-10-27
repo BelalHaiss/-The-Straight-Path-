@@ -142,7 +142,7 @@ function Login() {
         setTimeout(theDefaultLoginBtn, [100]);
         return onOpen();
     }
-    return () => onClose;
+    return () => onClose();
   }, [loginBtn, onOpen]);
 
   return (
@@ -191,8 +191,6 @@ function Login() {
               او
             </Center>
             <form
-              action='/api/auth'
-              method={loginState === 'signin' ? 'get' : 'post'}
               onSubmit={onSubmit}
             >
               {loginState !== 'signin' && (
@@ -366,11 +364,13 @@ function Login() {
                   isDisabled={formSubmited}
                   bg={'green.400'}
                   color={'white'}
+                  isLoading={formSubmited}
                   type='submit'
                   _hover={{
                     bg: 'green.500'
                   }}
                 >
+
                   Submit
                 </Button>
               </Stack>

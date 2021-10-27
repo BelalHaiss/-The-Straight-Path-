@@ -10,14 +10,3 @@ body {
     height: 100%;
   }
 }
-@media (max-width: 300px) {
-  .nav-Breadcrumb ol li {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    span {
-      transform: rotateZ(270deg);
-    }
-  }
-}

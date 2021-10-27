@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useStore } from '../../zustand/store';
 import Loader from '../Layout/Loader';
 const ProtectedRoute = (WrappedComponent) => {
   // eslint-disable-next-line

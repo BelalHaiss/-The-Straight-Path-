@@ -1,29 +1,46 @@
 {
-  "name": "ui",
-  "version": "0.1.0",
-  "private": true,
+
   "scripts": {
+
     "dev": "next dev",
+
     "build": "next build",
+
     "start": "next start",
+
     "lint": "next lint"
+
   },
+
   "dependencies": {
-    "@chakra-ui/react": "^1.6.8",
-    "@emotion/react": "^11.4.1",
+
+    "@chakra-ui/react": "^1.6.10",
+
+    "@emotion/react": "^11.5.0",
+
     "@emotion/styled": "^11.3.0",
-    "axios": "^0.21.4",
+
+    "axios": "^0.24.0",
+
+    "formik": "^2.2.9",
+
     "framer-motion": "^4.1.17",
-    "next": "11.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-icons": "^4.2.0",
-    "sass": "^1.38.2",
+
+    "next": "^12.0.1",
+
+    "react": "^17.0.2",
+
+    "react-dom": "^17.0.2",
+
+    "react-icons": "^4.3.1",
+
+    "sass": "^1.43.4",
+
     "swr": "^1.0.1",
-    "zustand": "^3.5.10"
-  },
-  "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-config-next": "11.1.0"
+
+    "zustand": "^3.6.1"
+
   }
+
 }
+
