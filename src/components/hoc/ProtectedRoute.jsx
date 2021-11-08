@@ -15,8 +15,10 @@ const ProtectedRoute = (WrappedComponent) => {
       const user = useStore((state) => state.user);
       // eslint-disable-next-line
       useEffect(() => {
-        setLoading(false);
-      }, [user]);
+        const userSaved = document.cookie.includes('TSPUSER');
+        if (!user && !userSaved) setLoading(false);
+        if (user) setLoading(false);
+      });
       if (loading) return <Loader />;
       // If there is no access token we redirect to "/" page.
       if (!user && !loading) {

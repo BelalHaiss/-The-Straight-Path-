@@ -150,8 +150,26 @@ function Login() {
       <ModalOverlay />
 
       <ModalContent>
-        <ModalHeader textAlign='center'>
+        <ModalHeader display='flex' flexDirection='column' textAlign='center'>
           {loginState === 'signin' ? 'تسجيل الدخول' : 'انشاء حساب جديد '}
+          <UiLink
+            mt='1'
+            color={'gray.800'}
+            fontSize='small'
+            _hover={{
+              background: 'white',
+              color: 'green.500'
+            }}
+            onClick={() =>
+              loginState === 'signin'
+                ? theLoginBtn('signup')
+                : theLoginBtn('signin')
+            }
+          >
+            {loginState === 'signin'
+              ? 'انشاء حساب جديد ؟'
+              : 'بالفعل لدي حساب !'}
+          </UiLink>
         </ModalHeader>
         <ModalCloseButton />
 
@@ -190,9 +208,7 @@ function Login() {
             <Center fontSize='lg' fontWeight='bold'>
               او
             </Center>
-            <form
-              onSubmit={onSubmit}
-            >
+            <form onSubmit={onSubmit}>
               {loginState !== 'signin' && (
                 <>
                   <FormControl
@@ -330,32 +346,18 @@ function Login() {
                   justify={'space-between'}
                 >
                   <Flex direction='column'>
-                    <UiLink
-                      color={loginState === 'signin' ? '#c1121f' : 'gray.800'}
-                      fontWeight='bold'
-                      _hover={{
-                        color: 'green.500'
-                      }}
-                      onClick={() =>
-                        loginState !== 'signin' && theLoginBtn('signin')
-                      }
-                    >
-                      {loginState === 'signin'
-                        ? 'نسيت كلمة السر ؟'
-                        : 'لديك حساب بالفعل ؟'}
-                    </UiLink>
                     {loginState === 'signin' && (
                       <UiLink
-                        color={'gray.800'}
+                        color={'#c1121f'}
+                        fontWeight='bold'
                         _hover={{
-                          background: 'white',
                           color: 'green.500'
                         }}
                         onClick={() =>
-                          loginState === 'signin' && theLoginBtn('signup')
+                          alert('forget password will be applied soon')
                         }
                       >
-                        {loginState === 'signin' && 'انشاء حساب جديد ؟'}
+                        نسيت كلمة السر ؟
                       </UiLink>
                     )}
                   </Flex>
@@ -370,7 +372,6 @@ function Login() {
                     bg: 'green.500'
                   }}
                 >
-
                   Submit
                 </Button>
               </Stack>

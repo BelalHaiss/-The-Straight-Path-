@@ -2,11 +2,17 @@ import React from 'react';
 
 import Link from 'next/link';
 import { Link as UiLink } from '@chakra-ui/react';
-const SingleLink = ({ navItem, theActivePage, onClose, activePage ,isOpen}) => {
+const SingleLink = ({
+  navItem,
+  theActivePage,
+  onClose,
+  activePage,
+  isOpen
+}) => {
   return (
     <Link passHref href={navItem.href ? navItem.href : '#'}>
       <UiLink
-        onClick={() => {  
+        onClick={() => {
           isOpen && onClose();
           theActivePage({ text: navItem.text, href: navItem.href });
         }}

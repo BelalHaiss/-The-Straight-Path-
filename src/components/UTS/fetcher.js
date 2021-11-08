@@ -9,10 +9,9 @@ export const fetcher = async (url, method = 'get', data = null) => {
       data,
       withCredentials: true
     });
-
     return res.data;
   } catch (error) {
-    console.dir(error,'fetcher error');
+    console.dir(error, 'fetcher error');
 
     throw new Error(error.response.data || 'حدث خطا');
   }

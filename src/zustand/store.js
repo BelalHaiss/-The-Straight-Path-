@@ -6,7 +6,7 @@ import { fetcher } from '../components/UTS/fetcher';
 let store;
 const initialState = {
   loginBtn: false,
-  activePage: { text: '', href: '' },
+  activePage: { text: '', href: '/' },
   user: null
 };
 
@@ -35,7 +35,8 @@ export const initializeStore = (preloadedState = {}) => {
       theLogout: async () => {
         try {
           set({ user: null });
-          await fetcher('auth/logout');
+
+          await fetcher('auth/logout', 'POST');
         } catch (error) {
           return null;
         }

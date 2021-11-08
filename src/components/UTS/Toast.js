@@ -6,6 +6,6 @@ export default function Toast(text, description, type = 'error') {
     title: text,
     description: description && description,
     status: `${type}`,
-    duration: 2000
+    duration: 3000
   });
 }

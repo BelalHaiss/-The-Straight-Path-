@@ -16,12 +16,8 @@ import { useStore } from '../../zustand/store';
 import SingleLink from './SingleLink';
 const UiLinkItem = ({ onClose, isOpen }) => {
   const user = useStore((state) => state.user);
-  const theActivePage = useStore(
-    useCallback((state) => state.theActivePage, [activePage])
-  );
-  const activePage = useStore(
-    useCallback((state) => state.activePage, [activePage])
-  );
+  const activePage = useStore((state) => state.activePage);
+  const theActivePage = useStore((state) => state.theActivePage);
   const commonLinks = {
     user: [
       { text: 'حسابي', href: '/users/' + user?.username },
@@ -112,9 +108,7 @@ const UiLinkItem = ({ onClose, isOpen }) => {
               _expanded={{ bg: 'green.400', color: 'gray.200' }}
               _focus={{ boxShadow: 'outline' }}
             >
-              <Link passHref href={navItem.href ? navItem.href : '#'}>
-                {navItem.text}
-              </Link>
+              <Link href={navItem.href}>{navItem.text}</Link>
             </MenuButton>
             <MenuList backgroundColor='gray.200' minW='250px' zIndex='5000'>
               {navItem.children.map((child) => (

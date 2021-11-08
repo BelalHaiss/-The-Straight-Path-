@@ -1,8 +1,9 @@
 import { extendTheme } from '@chakra-ui/react';
 const theme = extendTheme({
-  fonts: {
-    heading: 'Tajawal , sans-serif',
-    body: 'Tajawal'
+  textStyles: {
+    body: {
+      fontFamily: 'Tajawal , sans-serif'
+    }
   },
   styles: {
     global: {
@@ -22,7 +23,7 @@ const theme = extendTheme({
         zIndex: '-1',
         borderRadius: 'xl',
         mr: { base: '0', sm: '2' },
-        overflow: "auto",
+        overflow: 'auto',
         boxShadow: 'xl',
         bottom: '20%'
       },
