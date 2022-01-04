@@ -1,15 +1,25 @@
 import { extendTheme } from '@chakra-ui/react';
 const theme = extendTheme({
+  colors: {
+    brand: {
+      icons: '#118ab2',
+      // ...
+      textPrimary: '#4a5570',
+      textSecondary: '#7B8793',
+      green: '#06d6a0'
+    }
+  },
   textStyles: {
     body: {
-      fontFamily: 'Tajawal , sans-serif'
+      fontFamily: 'Tajawal , sans-serif',
+      display: 'flex'
     }
   },
   styles: {
     global: {
       // styles for the `body`
       body: {
-        bgGradient: 'linear(to-r, #c0fdff,#cad2c5, #caffbf)',
+        bgGradient: 'linear(to-r, #c0fdff 0%,#cad2c5, #caffbf)',
         zIndex: '-20'
       },
       main: {

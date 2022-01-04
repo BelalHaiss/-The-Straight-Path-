@@ -18,8 +18,11 @@ const ProtectedRoute = (WrappedComponent) => {
         const userSaved = document.cookie.includes('TSPUSER');
         if (!user && !userSaved) setLoading(false);
         if (user) setLoading(false);
-      });
-      if (loading) return <Loader />;
+        if (!user && userSaved) setLoading(false);
+      }, [user, loading]);
+      if (loading) {
+        return <Loader circle={true} />;
+      }
       // If there is no access token we redirect to "/" page.
       if (!user && !loading) {
         Router.replace('/');

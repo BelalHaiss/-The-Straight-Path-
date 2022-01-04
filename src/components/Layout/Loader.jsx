@@ -1,6 +1,18 @@
-import { Box, SkeletonCircle, SkeletonText } from '@chakra-ui/react';
+import {
+  Box,
+  SkeletonCircle,
+  SkeletonText,
+  Flex,
+  CircularProgress
+} from '@chakra-ui/react';
 
-const Loader = () => {
+const Loader = ({ circle }) => {
+  if (circle)
+    return (
+      <Flex alignItems='center' justifyContent='center' mt='40vh'>
+        <CircularProgress size='120px' isIndeterminate color='green.300' />
+      </Flex>
+    );
   return (
     <Box dir='ltr'>
       <Box

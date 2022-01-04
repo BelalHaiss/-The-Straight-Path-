@@ -12,10 +12,10 @@ export const checkRegister = (state, registerData) => {
   let message = false;
 
   if (state === 'signup') {
-    if (registerData.name.length < 8) {
+    if (registerData.fName === '' || registerData.lName === '') {
       return {
         error: 'name',
-        message: 'برجاء ادخال الاسم كاملا'
+        message: 'برجاء ادخال الاسم'
       };
     }
     const usernameREGEX = /^[\w|ء-ي]{4,}$/;

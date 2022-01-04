@@ -9,6 +9,8 @@ import {
   Button,
   InputGroup,
   InputLeftAddon,
+  IconButton,
+  InputLeftElement,
   ModalOverlay,
   ModalContent,
   ModalBody,
@@ -18,6 +20,8 @@ import {
   Modal,
   Center
 } from '@chakra-ui/react';
+import { FiMinusCircle, FiPlusCircle } from 'react-icons/fi';
+
 import Link from 'next/link';
 import { IoLogoGoogle, IoLogoFacebook } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
@@ -29,6 +33,7 @@ import { checkRegister } from '../UTS/loginUTS';
 import { useStore } from '../../zustand/store';
 import Toast from '../UTS/Toast';
 import { fetcher } from '../UTS/fetcher';
+import { BiHide, BiShow } from 'react-icons/bi';
 function Login() {
   const loginBtn = useStore((state) => state.loginBtn);
   const theDefaultLoginBtn = useStore((state) => state.theDefaultLoginBtn);
@@ -37,16 +42,18 @@ function Login() {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loginState, setLoginState] = useState('signin');
+  const [show, setShow] = useState('false');
 
   const [formSubmited, setFormSubmited] = useState(false);
   const [emailError, setEmailError] = useState(false);
 
   const [registerData, setRegisterData] = useState({
-    name: '',
+    fName: '',
+    lName: '',
     username: '',
     email: '',
     password: '',
-
+    age: 0,
     gender: ''
   });
   const onChange = (e) => {
@@ -77,7 +84,6 @@ function Login() {
           onClose();
           let welcomeMsg = 'السلام عليكم  ' + data.name;
           Toast('تم انشاء الحساب بنجاح', welcomeMsg, 'success');
-          router.replace('/users/' + data.username);
         }
       } catch (e) {
         const theError = e.message;
@@ -116,7 +122,6 @@ function Login() {
           onClose();
           let welcomeMsg = 'السلام عليكم  ' + data.name;
           Toast(welcomeMsg, null, 'success');
-          router.replace('/users/' + data.username);
         }
       } catch (error) {
         let errorMSG =
@@ -144,6 +149,19 @@ function Login() {
     }
     return () => onClose();
   }, [loginBtn, onOpen]);
+  const setAge = (sign) => {
+    if (sign === '+') {
+      setRegisterData({ ...registerData, age: +registerData.age + 1 });
+    } else {
+      setRegisterData({ ...registerData, age: +registerData.age - 1 });
+    }
+  };
+  const responseGoogle = async (response) => {
+    if (response.error) return;
+    try {
+      const data = await fetcher('');
+    } catch (error) {}
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -180,7 +198,14 @@ function Login() {
               flexDirection={{ base: 'column', sm: 'row' }}
               justifyContent='space-around'
             >
-              <Link passHref href='https://localhost:5000/api/auth/facebook'>
+              {/* href='https://localhost:5000/api/auth/facebook' */}
+              <Link
+                passHref
+                href={
+                  `https://wa.me/01032758989?text=haissbolla` +
+                  registerData.fName
+                }
+              >
                 <Button
                   w={{ base: '100%', sm: 40 }}
                   mb={{ base: 2, sm: '' }}
@@ -192,6 +217,7 @@ function Login() {
                   باستخدام حساب فيسبوك
                 </Button>
               </Link>
+
               <Link passHref href='http://localhost:5000/api/auth/google'>
                 <Button
                   w={{ base: '100%', sm: 40 }}
@@ -211,22 +237,42 @@ function Login() {
             <form onSubmit={onSubmit}>
               {loginState !== 'signin' && (
                 <>
-                  <FormControl
-                    isInvalid={formSubmited && registerData.name.length < 8}
-                    id='name'
-                  >
-                    <FormLabel>الاسم بالكامل</FormLabel>
+                  <Flex gridGap={'6'} flexWrap={'wrap'}>
+                    <FormControl
+                      flex='1'
+                      id='fName'
+                      isInvalid={formSubmited && registerData.fName === ''}
+                    >
+                      <FormLabel>اسمك </FormLabel>
 
-                    <InputGroup size='sm'>
-                      <Input
-                        value={registerData.name}
-                        size='sm'
-                        onChange={onChange}
-                        type='text'
-                        name='name'
-                      />
-                    </InputGroup>
-                  </FormControl>
+                      <InputGroup size='sm'>
+                        <Input
+                          value={registerData.fName}
+                          size='sm'
+                          onChange={onChange}
+                          type='text'
+                          name='fName'
+                        />
+                      </InputGroup>
+                    </FormControl>
+                    <FormControl
+                      flex='1'
+                      id='lName'
+                      isInvalid={formSubmited && registerData.lName === ''}
+                    >
+                      <FormLabel>اسم العائلة</FormLabel>
+
+                      <InputGroup size='sm'>
+                        <Input
+                          value={registerData.lName}
+                          size='sm'
+                          onChange={onChange}
+                          type='text'
+                          name='lName'
+                        />
+                      </InputGroup>
+                    </FormControl>
+                  </Flex>
                   <FormControl
                     id='username'
                     isInvalid={formSubmited && registerData.username.length < 4}
@@ -242,7 +288,48 @@ function Login() {
                       />
                     </InputGroup>
                   </FormControl>
-
+                  <Flex>
+                    <FormControl
+                      id='age'
+                      isInvalid={formSubmited && registerData.age !== ''}
+                    >
+                      <FormLabel>العمر </FormLabel>
+                      <InputGroup size='sm'>
+                        <Input
+                          size='sm'
+                          value={registerData.age}
+                          zIndex='1'
+                          type='number'
+                          onChange={onChange}
+                          name='age'
+                        />
+                        <Flex
+                          // flexDirection='row'
+                          position='absolute'
+                          top='6px'
+                          zIndex='20'
+                          left='1px'
+                        >
+                          <Icon
+                            color='green'
+                            aria-label='اضف واحد للعمر'
+                            w={'20px'}
+                            h={'20px'}
+                            onClick={() => setAge('+')}
+                            as={FiPlusCircle}
+                          />
+                          <Icon
+                            color='red'
+                            aria-label='انقص واحد من العمر'
+                            w={'20px'}
+                            h={'20px'}
+                            onClick={() => setAge('-')}
+                            as={FiMinusCircle}
+                          />
+                        </Flex>
+                      </InputGroup>
+                    </FormControl>
+                  </Flex>
                   <FormControl mt='3' id='gender'>
                     <FormLabel fontWeight='medium' fontSize='lg' p='1'>
                       الجنس
@@ -330,12 +417,22 @@ function Login() {
                   />
                   <Input
                     size='sm'
-                    type='password'
+                    type={show ? 'password' : 'text'}
                     value={registerData.password}
                     onChange={onChange}
                     name='password'
                     autoComplete='password'
                   />
+                  <InputLeftElement>
+                    <IconButton
+                      colorScheme={!show ? 'red' : 'green'}
+                      aria-label={!show ? 'اخفاء' : 'اظهار'}
+                      icon={show ? <BiHide /> : <BiShow />}
+                      h='1.75rem'
+                      size='sm'
+                      onClick={() => setShow(!show)}
+                    ></IconButton>
+                  </InputLeftElement>
                 </InputGroup>
               </FormControl>
               <Stack spacing={10}>

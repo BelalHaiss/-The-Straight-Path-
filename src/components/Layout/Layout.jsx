@@ -5,26 +5,32 @@ import Loader from './Loader';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Toast from '../UTS/Toast';
+
 import { useStore } from '../../zustand/store';
 import { fetcher } from '../UTS/fetcher';
 import Meta from '../Meta';
 import Footer from './Footer';
 const Layout = ({ children }) => {
+  const router = useRouter();
+  const locale = router.locale;
   const [loading, setLoading] = useState(true);
   const [isUser, setIsUser] = useState(false);
-  const router = useRouter();
   const theSetUser = useStore((state) => state.theSetUser);
   const user = useStore((state) => state.user);
+  const theActivePage = useStore((state) => state.theActivePage);
+  const lang = useStore((state) => state.lang);
+  const setLang = useStore((state) => state.setLang);
 
-  const { data, error } = useSWR(isUser ? '/users' : null, fetcher, {
+  const {} = useSWR(isUser ? '/users' : null, fetcher, {
     onSuccess: (data) => {
       theSetUser(data);
+      setLoading(false);
       let welcomeMsg = 'السلام عليكم  ';
       Toast(welcomeMsg, data.name, 'success');
-      router.replace('/users/' + user.username);
-      setLoading(false);
     },
-    onError: () => setLoading(false)
+    onError: () => {
+      setLoading(false);
+    }
   });
   useEffect(() => {
     if (!user) {
@@ -33,6 +39,14 @@ const Layout = ({ children }) => {
       if (!userSaved) setLoading(false);
     }
   }, [user]);
+  useEffect(() => {
+    if (lang !== locale) {
+      setLang(locale);
+    }
+    if (lang === 'ar') {
+      document.body.style.direction = 'rtl';
+    }
+  }, [locale]);
 
   if (loading) {
     return <Loader />;

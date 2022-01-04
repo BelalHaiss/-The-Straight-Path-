@@ -7,7 +7,8 @@ let store;
 const initialState = {
   loginBtn: false,
   activePage: { text: '', href: '/' },
-  user: null
+  user: null,
+  lang: 'ar'
 };
 
 const zustandContext = createContext();
@@ -25,13 +26,7 @@ export const initializeStore = (preloadedState = {}) => {
       theDefaultLoginBtn: () => set((state) => ({ loginBtn: false })),
       theActivePage: (path) => set((state) => ({ activePage: path })),
       theSetUser: (user) => set({ user: user }),
-      theSetLoading: () =>
-        set({
-          loading: {
-            state: !get().loading.state,
-            checked: !get().loading.checked
-          }
-        }),
+      setLang: (lang) => set({ lang: lang }),
       theLogout: async () => {
         try {
           set({ user: null });
